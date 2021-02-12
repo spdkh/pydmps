@@ -141,7 +141,6 @@ class DMPs(object):
                 plt.plot(f_target[:, ii], "--", label="f_target %i" % ii)
             for ii in range(self.n_dmps):
                 plt.subplot(2, self.n_dmps, self.n_dmps + 1 + ii)
-                print("w shape: ", self.w.shape)
                 plt.plot(
                     np.sum(psi_track * self.w[ii], axis=1) * self.dt,
                     label="w*psi %i" % ii,
@@ -202,7 +201,10 @@ class DMPs(object):
         for d in range(self.n_dmps):
 
             # generate the forcing term
-            f = self.gen_front_term(x, d) * (np.dot(psi, self.w[d])) / np.sum(psi)
+            f = self.gen_front_term(x, d) * (np.dot(psi, self.w[d]))
+            sum_psi = np.sum(psi)
+            if np.abs(sum_psi) > 1e-6:
+                f /= sum_psi
 
             # DMP acceleration
             self.ddy[d] = (
